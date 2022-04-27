@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "358835551515",
+    "project_id": "projectpockettrainer",
+    "storage_bucket": "projectpockettrainer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358835551515:android:16d2726a182a12f69fa7be",
+        "android_client_info": {
+          "package_name": "com.projectpockettrainer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358835551515-grju8i0npvajn86o5fj04ipg53krtqk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7-rH845aBBBwHlRfcNowdrLzw7yTcIrY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358835551515-grju8i0npvajn86o5fj04ipg53krtqk5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
