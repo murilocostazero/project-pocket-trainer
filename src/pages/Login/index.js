@@ -1,17 +1,31 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {View, Text, TextInput, TouchableHighlight, ScrollView} from 'react-native';
 import colors from '../../styles/colors.styles';
 import general from '../../styles/general.styles';
 
 import {CircleIconButton, FlatButton} from '../../components';
+import createUser from '../../utils/firebase';
 
 export default function Login(props) {
   const [haveAccount, setHaveAccount] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [height, setHeight] = useState('');
+  const [registeringUser, setRegisteringUser] = useState(false);
+
+  const passwordRef = useRef('passwordRef');
+
+  async function saveNewUser(){
+    setRegisteringUser(true);
+    let userCreated = await createUser(email, password);
+    if(userCreated.success == false){
+      props.handleSnackbar({message: userCreated.message, type: 'warning'});
+      setRegisteringUser(false);
+    } else {
+      setRegisteringUser(false);
+      props.onAuthStateChanged(userCreated.user);
+    }
+  }
 
   return haveAccount ? (
     <View style={[general.columnContainer, {justifyContent: 'center'}]}>
@@ -79,36 +93,6 @@ export default function Login(props) {
       <Text style={general.title}>Registre-se</Text>
 
       <View style={{marginVertical: 4, padding: 8}}>
-        <Text style={general.primaryDarkText}>Nome</Text>
-        <View style={general.textFieldContainer}>
-          <TextInput
-            placeholder="Fulano Fulanoso"
-            placeholderTextColor={colors.text.lightDark}
-            style={general.textField}
-            onChangeText={text => setName(text)}
-          />
-        </View>
-      </View>
-
-      <View style={{marginVertical: 4, padding: 8}}>
-        <Text style={general.primaryDarkText}>Altura (cm)</Text>
-        <View style={general.textFieldContainer}>
-          <TextInput
-            placeholder="175"
-            placeholderTextColor={colors.text.lightDark}
-            style={general.textField}
-            onChangeText={text => setHeight(text)}
-            keyboardType='phone-pad'
-          />
-        </View>
-      </View>
-
-      <View style={{marginVertical: 4, padding: 8}}>
-        <Text style={general.primaryDarkText}>Gênero</Text>
-        
-      </View>
-
-      <View style={{marginVertical: 4, padding: 8}}>
         <Text style={general.primaryDarkText}>Email</Text>
         <View style={general.textFieldContainer}>
           <TextInput
@@ -116,6 +100,7 @@ export default function Login(props) {
             placeholderTextColor={colors.text.lightDark}
             style={general.textField}
             onChangeText={text => setEmail(text)}
+            onSubmitEditing={() => { passwordRef.current.focus() }}
           />
         </View>
       </View>
@@ -124,11 +109,13 @@ export default function Login(props) {
         <Text style={general.primaryDarkText}>Senha</Text>
         <View style={general.textFieldContainer}>
           <TextInput
+            ref={passwordRef}
             secureTextEntry={isPasswordVisible}
             placeholder="********"
             placeholderTextColor={colors.text.lightDark}
             style={general.textField}
             onChangeText={text => setPassword(text)}
+            onSubmitEditing={() => saveNewUser()}
           />
           <CircleIconButton
             size={32}
@@ -145,7 +132,8 @@ export default function Login(props) {
       <FlatButton
         label="Registrar"
         backgroundColor={colors.primary}
-        handleFlatButtonPress={() => {}}
+        handleFlatButtonPress={() => saveNewUser()}
+        onLoading={registeringUser}
       />
 
       <View

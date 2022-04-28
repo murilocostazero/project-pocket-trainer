@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableHighlight } from 'react-native';
+import { ActivityIndicator, Text, TouchableHighlight } from 'react-native';
 import general from '../../styles/general.styles';
 
-//label='' backgroundColor={} handleFlatButtonPress={() => {}}
+//label='' backgroundColor={} handleFlatButtonPress={() => {}} onLoading={}
 
 export default function FlatButton(props) {
   return (
@@ -18,7 +18,11 @@ export default function FlatButton(props) {
             height: 56,
             marginVertical: 16
         }} >
-        <Text style={general.primaryLightText}>{props.label}</Text>
+        {
+          props.onLoading ?
+          <ActivityIndicator size="large" color="#FFF" /> :
+          <Text style={general.primaryLightText}>{props.label}</Text>
+        }
     </TouchableHighlight>
   )
 }
