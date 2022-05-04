@@ -4,26 +4,36 @@ import colors from '../../styles/colors.styles';
 import general from '../../styles/general.styles';
 
 import {CircleIconButton, FlatButton} from '../../components';
-import createUser from '../../utils/firebase';
+import {createUser, loginUser} from '../../utils/firebase';
 
 export default function Login(props) {
   const [haveAccount, setHaveAccount] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [registeringUser, setRegisteringUser] = useState(false);
+  const [loadingLoginForm, setLoadingLoginForm] = useState(false);
 
   const passwordRef = useRef('passwordRef');
 
   async function saveNewUser(){
-    setRegisteringUser(true);
+    setLoadingLoginForm(true);
     let userCreated = await createUser(email, password);
     if(userCreated.success == false){
       props.handleSnackbar({message: userCreated.message, type: 'warning'});
-      setRegisteringUser(false);
+      setLoadingLoginForm(false);
     } else {
-      setRegisteringUser(false);
-      props.onAuthStateChanged(userCreated.user);
+      setLoadingLoginForm(false);
+    }
+  }
+
+  async function login(){
+    setLoadingLoginForm(true);
+    let userLogin = await loginUser(email, password);
+    if(userLogin.success == false){
+      props.handleSnackbar({message: userLogin.message, type: 'warning'});
+      setLoadingLoginForm(false);
+    } else {
+      setLoadingLoginForm(false);
     }
   }
 
@@ -38,6 +48,7 @@ export default function Login(props) {
             placeholder="emaildousuario@gmail.com"
             placeholderTextColor={colors.text.lightDark}
             style={general.textField}
+            value={email}
             onChangeText={text => setEmail(text)}
           />
         </View>
@@ -51,6 +62,7 @@ export default function Login(props) {
             placeholder="********"
             placeholderTextColor={colors.text.lightDark}
             style={general.textField}
+            value={password}
             onChangeText={text => setPassword(text)}
           />
           <CircleIconButton
@@ -68,7 +80,8 @@ export default function Login(props) {
       <FlatButton
         label="Entrar"
         backgroundColor={colors.primary}
-        handleFlatButtonPress={() => {}}
+        handleFlatButtonPress={() => login()}
+        onLoading={loadingLoginForm}
       />
 
       <View
@@ -99,6 +112,7 @@ export default function Login(props) {
             placeholder="emaildousuario@gmail.com"
             placeholderTextColor={colors.text.lightDark}
             style={general.textField}
+            value={email}
             onChangeText={text => setEmail(text)}
             onSubmitEditing={() => { passwordRef.current.focus() }}
           />
@@ -114,6 +128,7 @@ export default function Login(props) {
             placeholder="********"
             placeholderTextColor={colors.text.lightDark}
             style={general.textField}
+            value={password}
             onChangeText={text => setPassword(text)}
             onSubmitEditing={() => saveNewUser()}
           />
@@ -133,7 +148,7 @@ export default function Login(props) {
         label="Registrar"
         backgroundColor={colors.primary}
         handleFlatButtonPress={() => saveNewUser()}
-        onLoading={registeringUser}
+        onLoading={loadingLoginForm}
       />
 
       <View
